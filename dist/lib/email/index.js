@@ -11,15 +11,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendMail = sendMail;
 const smtp_1 = require("../configs/smtp");
+const fs = require("fs");
+const Handlebars = require("handlebars");
 function sendMail(options) {
     return __awaiter(this, void 0, void 0, function* () {
         const transporter = (0, smtp_1.createTransporter)();
+        let htmlContent;
+        // Jika templatePath diberikan, baca dan compile template Handlebars
+        if (options.templatePath) {
+            try {
+                const templateFileContent = fs.readFileSync(options.templatePath, 'utf-8');
+                const compiledTemplate = Handlebars.compile(templateFileContent);
+                htmlContent = compiledTemplate(options.context);
+            }
+            catch (error) {
+                console.error('Error reading or compiling template:', error);
+                throw error;
+            }
+        }
         const mailOptions = {
             from: options.from,
             to: options.to,
             subject: options.subject,
-            text: options.text,
-            html: options.html,
+            html: htmlContent, // Menggunakan HTML yang dihasilkan dari template jika ada
+            text: options.text, // Menggunakan text jika template tidak tersedia
             attachments: options.attachments,
         };
         try {

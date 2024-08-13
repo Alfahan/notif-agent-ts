@@ -2,8 +2,11 @@ export interface MailOptions {
     from: string;
     to: string;
     subject: string;
+    templatePath?: string;
+    context?: {
+        [key: string]: any;
+    };
     text?: string;
-    html?: string;
     attachments?: Array<{
         filename: string;
         path: string;

@@ -9,55 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendBellBroadcast = exports.sendBell = void 0;
+exports.sendBell = void 0;
 const db_1 = require("../configs/db");
-// send notif bell
-const sendBell = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    // Simple input validation (you can expand this as needed)
-    if (!payload.user_id || !payload.type || !payload.name || !payload.email || !payload.icon || !payload.path || !payload.content) {
-        throw new Error("Missing required fields in the payload.");
-    }
-    const dt = yield (0, db_1.dt_conf)();
-    // Start timing the operation
-    console.time("sendBell");
-    const insertQuery = `
-    INSERT INTO dev_fabd_user_core_owner.notifications (
-        user_id, "type", "name", email, phone, icon, "path", "content", color
-        ) VALUES (
-            $1, $2, $3, $4, $5, $6, $7, $8, $9
-    )`;
-    const values = [
-        payload.user_id,
-        payload.type,
-        payload.name,
-        payload.email,
-        payload.phone,
-        payload.icon,
-        payload.path,
-        JSON.stringify(payload.content), // Ensure content is stored as JSON
-        payload.color || 'primary'
-    ];
-    try {
-        yield dt.query(insertQuery, values);
-    }
-    catch (error) {
-        console.error("Error inserting notification:", error);
-        throw new Error("Failed to send notification.");
-    }
-    finally {
-        // End timing and log the duration
-        console.timeEnd("sendBell");
-    }
-});
-exports.sendBell = sendBell;
-const sendBellBroadcast = (userIdentifiers, payload) => __awaiter(void 0, void 0, void 0, function* () {
+const sendBell = (userIdentifiers, payload) => __awaiter(void 0, void 0, void 0, function* () {
     // Validate that the userIdentifiers array is not empty
     if (!userIdentifiers || userIdentifiers.length === 0) {
         throw new Error("User identifiers array is empty.");
     }
     const dt = yield (0, db_1.dt_conf)();
-    // Start timing the operation
-    console.time("sendBellBroadcast");
     // Prepare the base insert query
     const insertQuery = `
         INSERT INTO dev_fabd_user_core_owner.notifications (
@@ -90,9 +49,5 @@ const sendBellBroadcast = (userIdentifiers, payload) => __awaiter(void 0, void 0
         console.error("Error broadcasting notifications:", error);
         throw new Error("Failed to send broadcast notifications.");
     }
-    finally {
-        // End timing and log the duration
-        console.timeEnd("sendBellBroadcast");
-    }
 });
-exports.sendBellBroadcast = sendBellBroadcast;
+exports.sendBell = sendBell;

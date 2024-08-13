@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createTransporter = createTransporter;
-const nodemailer_1 = require("nodemailer");
 const dotenv = require("dotenv");
+const nodemailer = require("nodemailer");
 // Load environment variables from .env file
 dotenv.config();
 function createTransporter() {
-    return nodemailer_1.default.createTransport({
+    console.log('Creating transporter with createTransport...');
+    return nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: parseInt(process.env.SMTP_PORT || '587', 10), // Gunakan basis 10
         secure: process.env.SMTP_PORT === '465', // true untuk port 465

@@ -1,15 +1,3 @@
-export interface NotificationPayload {
-    user_id: string;
-    type: string;
-    name: string;
-    email: string;
-    phone: string;
-    icon: string;
-    path: string;
-    content: any; // Adjust the type based on your JSON structure
-    color?: string;
-}
-
 export interface UserIdentifier {
     user_id: string;
     name: string;
@@ -17,7 +5,7 @@ export interface UserIdentifier {
     phone: string;
 }
 
-export interface NotificationPayloadBroadcast {
+export interface NotificationPayload {
     type: string;
     icon: string;
     path: string;

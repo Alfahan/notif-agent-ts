@@ -2,7 +2,7 @@ import Notification from '../index'; // Pastikan mengimport fungsi dari lokasi y
 
 async function main() {
     const messageData = {
-        phone_number: '08993613408', // Example recipient phone number
+        phone_numbers: ['083875024305', '08993613408', '085867981195'], // Example recipient phone number
         message: {
             type: 'template',
 					template: {

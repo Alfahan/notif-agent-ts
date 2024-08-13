@@ -4,12 +4,16 @@ const index_1 = require("../index"); // Pastikan mengimport fungsi dari lokasi y
 const mailOptions = {
     from: 'sender@example.com',
     to: 'ali.farhan160@yopmail.com',
-    subject: 'Test Email with Attachment',
-    text: 'This is a test email with an optional attachment.',
+    subject: 'Welcome to Our Service',
+    templatePath: ``, // Path ke file template di luar proyek
+    context: {
+        name: 'John Doe',
+    },
+    // text: "HEH",
     attachments: [
         {
-            filename: 'test.txt',
-            path: './path/to/your/file.txt',
+            filename: 'document.pdf',
+            path: './document.pdf',
         },
     ],
 };
