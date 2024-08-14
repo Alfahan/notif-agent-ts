@@ -9,15 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index"); // Pastikan mengimport fungsi dari lokasi yang benar
+const index_1 = require("../index"); // Make sure to import the function from the correct location
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const messageData = {
-            phone_numbers: ['083875024305', '08993613408', '085867981195'], // Example recipient phone number
+            phone_numbers: ['083875024308', '08993613404', '085867981124'], // Example recipient phone number
             message: {
                 type: 'template',
                 template: {
-                    template_code_id: process.env.OCA_WA_TEMPLATE_CODE,
+                    template_code_id: process.env.OCA_WA_TEMPLATE_CODE, // Make sure template_code_id 
                     payload: [
                         {
                             position: 'body',
@@ -48,11 +48,12 @@ function main() {
             }
         };
         try {
+            // Send the message using the sendOcaWa function from the Notification object
             const response = yield index_1.default.sendOcaWa(messageData);
-            console.log('Message sent successfully:', response);
+            console.log('Message sent successfully:', response); // Log success response
         }
         catch (error) {
-            console.error('Failed to send message:', error.message);
+            console.error('Failed to send message:', error.message); // Handle and log errors that occur during sending
         }
     });
 }

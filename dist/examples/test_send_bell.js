@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index"); // Pastikan mengimport fungsi dari lokasi yang benar
+const index_1 = require("../index"); // Import the Notification function from the appropriate location
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        // Daftar user dengan informasi tambahan
+        // List of users with additional information like user_id, name, email, and phone
         const userIdentifiers = [
             {
                 user_id: '123e4567-e89b-12d3-a456-426614174000',
@@ -27,21 +27,23 @@ function main() {
                 phone: '081234567891'
             }
         ];
-        // Payload notifikasi yang akan dikirim ke semua user
+        // Notification payload that will be sent to all users
         const notificationPayload = {
-            type: 'info',
-            icon: 'bell',
-            path: '/dashboard/alerts',
-            content: { message: 'You have a new alert in your dashboard.' },
-            color: 'primary'
+            type: 'info', // Type of notification
+            icon: 'bell', // Icon to be displayed with the notification
+            path: '/dashboard/alerts', // URL path where the notification is linked
+            content: { message: 'You have a new alert in your dashboard.' }, // Message content of the notification
+            color: 'primary' // Color theme for the notification
         };
         try {
+            // Send the notification to the list of users
             yield index_1.default.sendBell(userIdentifiers, notificationPayload);
             console.log('Notification sent successfully!');
         }
         catch (error) {
+            // Handle any errors that occur during the notification process
             console.error('Failed to send broadcast notifications:', error);
         }
     });
 }
-main();
+main(); // Execute the main function to send the notifications

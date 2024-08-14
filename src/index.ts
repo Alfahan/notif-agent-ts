@@ -1,11 +1,18 @@
-import { sendBell } from "./lib/bell"
-import { sendMail } from "./lib/email"
-import { sendOcaWa } from "./lib/ocaWa"
+// Import the sendBell function from the 'bell' module
+import { sendBell } from "./lib/bell";
 
+// Import the sendMail function from the 'email' module
+import { sendMail } from "./lib/email";
+
+// Import the sendOcaWa function from the 'ocaWa' module
+import { sendOcaWa } from "./lib/ocaWa";
+
+// Create an object to group and export notification-related functions
 const Notification = {
-    sendBell,
-    sendMail,
-    sendOcaWa
-}
+    sendBell,   // Function to send bell notifications
+    sendMail,   // Function to send emails
+    sendOcaWa   // Function to send OCA WhatsApp messages
+};
 
-export default Notification
+// Export the Notification object as the default export of the module
+export default Notification;
