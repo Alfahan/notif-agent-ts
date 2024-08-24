@@ -11,37 +11,8 @@
 ## Usage Examples
 ### Usage Notification Bell
 ``` env
-    DB_EMAIL_HOST=localhost
-    DB_EMAIL_PORT=5432
-    DB_EMAIL_USERNAME=username
-    DB_EMAIL_PASSWORD=password
-    DB_EMAIL_DATABASE=database
-```
-
-```sql
-    CREATE TABLE dev_fabd_user_core_owner.notifications (
-        created_at timestamp(6) DEFAULT now() NOT NULL,
-        created_by varchar DEFAULT '1'::character varying NOT NULL,
-        created_name varchar DEFAULT 'System'::character varying NOT NULL,
-        updated_at timestamp(6) DEFAULT now() NULL,
-        updated_by varchar NULL,
-        updated_name varchar NULL,
-        deleted_at timestamp(6) NULL,
-        deleted_by varchar NULL,
-        deleted_name varchar NULL,
-        id uuid DEFAULT uuid_generate_v4() NOT NULL,
-        user_id varchar NOT NULL,
-        "type" varchar NOT NULL,
-        "name" varchar NOT NULL,
-        email varchar NOT NULL,
-        phone varchar NOT NULL,
-        icon varchar NOT NULL,
-        "path" varchar NOT NULL,
-        is_read bool DEFAULT false NOT NULL,
-        "content" jsonb NOT NULL,
-        color varchar(255) DEFAULT 'primary'::character varying NULL,
-        CONSTRAINT "PK_6a72c3c0f683f6462415e653c3a" PRIMARY KEY (id)
-    );
+    API_KEY_NOTIFICATION=API_KEY_NOTIFICATION
+    URL_NOTIFICATION=URL_NOTIFICATION
 ```
 
 ```typescript
@@ -88,11 +59,10 @@
 
 ### Usage Notification Email
 ``` env
-    DB_EMAIL_HOST=localhost
-    DB_EMAIL_PORT=5432
-    DB_EMAIL_USERNAME=username
-    DB_EMAIL_PASSWORD=password
-    DB_EMAIL_DATABASE=database
+    SMTP_HOST=SMTP_HOST
+    SMTP_PORT=SMTP_PORT
+    SMTP_USER=SMTP_USER
+    SMTP_PASS=SMTP_PASS
 ```
 
 ```typescript

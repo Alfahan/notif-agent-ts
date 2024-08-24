@@ -1,52 +1,47 @@
-import { dt_conf } from '../configs/db';
+import axios from 'axios';
 import { NotificationPayload, UserIdentifier } from './type';
 
-// Function to send broadcast notifications to users
+// Function to send broadcast notifications to users via API
 export const sendBell = async (userIdentifiers: UserIdentifier[], payload: NotificationPayload): Promise<void> => {
     // Validate that the userIdentifiers array is not empty
     if (!userIdentifiers || userIdentifiers.length === 0) {
         throw new Error("User identifiers array is empty.");
     }
 
-    // Initialize database connection
-    const dt = await dt_conf();
-
-    // Prepare the base SQL INSERT query
-    const insertQuery = `
-        INSERT INTO dev_fabd_user_core_owner.notifications (
-            user_id, "type", "name", email, phone, icon, "path", "content", color
-        ) VALUES
-    `;
-
-    // Construct the VALUES part of the query, handling multiple rows
-    const valueRows = userIdentifiers.map((_, index) => {
-        const baseIndex = index * 9; // Calculate base index for parameter placeholders
-        return `($${baseIndex + 1}, $${baseIndex + 2}, $${baseIndex + 3}, $${baseIndex + 4}, $${baseIndex + 5}, $${baseIndex + 6}, $${baseIndex + 7}, $${baseIndex + 8}, $${baseIndex + 9})`;
-    }).join(", ");
-
-    // Combine base query with the VALUES part
-    const fullQuery = insertQuery + valueRows;
-
-    // Flatten the user data and payload into a single array of values
-    const values = userIdentifiers.flatMap(user => [
-        user.user_id, // User ID
-        payload.type, // Notification type
-        user.name, // User name
-        user.email, // User email
-        user.phone, // User phone number
-        payload.icon, // Notification icon
-        payload.path, // Path for notification
-        JSON.stringify(payload.content), // Convert content to JSON string
-        payload.color || 'primary' // Notification color, defaulting to 'primary' if not provided
-    ]);
-
     try {
-        // Execute the query with the prepared values
-        await dt.query(fullQuery, values);
-        console.log('Broadcast notifications sent successfully!'); // Success message
+        // Prepare all API requests concurrently using Promise.all
+        const notificationRequests = userIdentifiers.map((user) => {
+            // Construct the notification payload
+            const notifPayload = {
+                type: payload.type,
+                user_id: user.user_id,
+                icon: payload.icon || 'bell',
+                path: payload.path || '/',
+                content: payload.content,
+                color: payload.color || 'primary'
+            };
+
+            // Return the axios post promise
+            return axios.post(`${process.env.URL_NOTIFICATION}/v4/notifications`, notifPayload, {
+                headers: {
+                    Authorization: `apiKey ${process.env.API_KEY_NOTIFICATION}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+        });
+
+        // Await all requests concurrently
+        const responses = await Promise.all(notificationRequests);
+
+        // Log responses for debugging
+        responses.forEach((response, index) => {
+            console.log(`Response from external endpoint for user ${userIdentifiers[index].user_id}:`, response.data);
+        });
+
+        console.log('Broadcast notifications sent successfully!');
     } catch (error) {
         // Handle errors and log them
-        console.error("Error broadcasting notifications:", error);
-        throw new Error("Failed to send broadcast notifications."); // Rethrow error with a custom message
+        console.error("Error broadcasting notifications via API:", error);
+        throw new Error("Failed to send broadcast notifications.");
     }
 };
