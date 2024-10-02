@@ -10,47 +10,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendMail = sendMail;
-const smtp_1 = require("../configs/smtp");
+const axios_1 = require("axios");
+const FormData = require("form-data");
 const fs = require("fs");
-const mustache = require("mustache");
-// Function to send an email based on the provided options
-function sendMail(options) {
+const dotenv = require("dotenv");
+dotenv.config();
+function sendMail(to, subject, templateCode, data, attachmentPath) {
     return __awaiter(this, void 0, void 0, function* () {
-        // Create a nodemailer Transporter instance using the createTransporter function
-        const transporter = (0, smtp_1.createTransporter)();
-        let htmlContent;
-        // If a templatePath is provided, read and compile the Handlebars template
-        if (options.templatePath) {
-            try {
-                // Read the HTML template file from the specified path
-                htmlContent = fs.readFileSync(options.templatePath, 'utf-8');
-                // Render the template with the provided context data
-                htmlContent = mustache.render(htmlContent, options.context);
-            }
-            catch (error) {
-                // Log and rethrow any errors encountered while reading or compiling the template
-                console.error('Error reading or compiling template:', error);
-                throw error;
-            }
+        const form = new FormData();
+        to.forEach(recipient => form.append('to', recipient));
+        form.append('subject', subject);
+        form.append('template_code', templateCode);
+        form.append('data', JSON.stringify(data));
+        if (attachmentPath) {
+            const fileStream = fs.createReadStream(attachmentPath);
+            form.append('attachments', fileStream);
         }
-        // Define the mail options to be used for sending the email
-        const mailOptions = {
-            from: options.from, // Sender's email address
-            to: options.to, // Recipient's email addresses
-            subject: options.subject, // Subject of the email
-            html: htmlContent, // HTML content of the email (rendered from the template, if provided)
-            text: options.text, // Plain text content of the email (used if no template is provided)
-            attachments: options.attachments, // Array of attachments to include in the email
+        const headers = Object.assign({ Authorization: `${process.env.API_KEY_NOTIFICATION}` }, form.getHeaders());
+        const options = {
+            method: 'POST',
+            url: `${process.env.URL_NOTIFICATION}/v4/webhooks/email-notifications`,
+            headers,
+            data: form,
         };
         try {
-            // Send the email using the transporter instance
-            yield transporter.sendMail(mailOptions);
-            console.log('Email sent successfully'); // Log success message
+            const response = yield axios_1.default.request(options);
+            console.log(response.data);
         }
         catch (error) {
-            // Log and rethrow any errors encountered during the email sending process
             console.error('Error sending email:', error);
-            throw error;
         }
     });
 }

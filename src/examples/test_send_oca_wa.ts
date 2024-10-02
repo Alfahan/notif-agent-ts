@@ -2,11 +2,11 @@ import Notification from '../index'; // Make sure to import the function from th
 
 async function main() {
     const messageData = {
-        phone_numbers: ['083875024308', '08993613404', '085867981124'], // Example recipient phone number
+        phone_number: '08993613408', // Example recipient phone number
         message: {
             type: 'template',
 					template: {
-						template_code_id: process.env.OCA_WA_TEMPLATE_CODE, // Make sure template_code_id 
+						template_code_id: '4fd64ce5_88ac_4983_a0ac_900dd0e98d0e:2stepverification', // Make sure template_code_id 
 						payload: [
 							{
 								position: 'body',

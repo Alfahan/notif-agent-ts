@@ -1,47 +1,55 @@
-import { Transporter } from 'nodemailer';
-import { createTransporter } from '../configs/smtp';
-import { MailOptions } from './type';
+import axios, { AxiosRequestConfig } from 'axios';
+import * as FormData from 'form-data';
 import * as fs from 'fs';
-import * as mustache from 'mustache';
+import * as dotenv from 'dotenv';
 
-// Function to send an email based on the provided options
-export async function sendMail(options: MailOptions): Promise<void> {
-    // Create a nodemailer Transporter instance using the createTransporter function
-    const transporter: Transporter = createTransporter();
-    
-    let htmlContent: string | undefined;
+dotenv.config();
 
-    // If a templatePath is provided, read and compile the Handlebars template
-    if (options.templatePath) {
-        try {
-            // Read the HTML template file from the specified path
-            htmlContent = fs.readFileSync(options.templatePath, 'utf-8');
-            // Render the template with the provided context data
-            htmlContent = mustache.render(htmlContent, options.context);
-        } catch (error) {
-            // Log and rethrow any errors encountered while reading or compiling the template
-            console.error('Error reading or compiling template:', error);
-            throw error;
-        }
+interface Attachment {
+    filename: string;
+    path: string;
+}
+
+export async function sendMail(
+    to: string[],
+    subject: string,
+    templateCode: string,
+    data: { [key : string]: any },
+    attachments?: Attachment[],
+): Promise<void> {
+    const form = new FormData();
+
+    to.forEach((recipient) => {
+        form.append('to', recipient);
+    });
+    form.append('subject', subject);
+    form.append('template_code', templateCode);
+    form.append('data', JSON.stringify(data));
+
+    if (attachments && attachments.length > 0) {
+        attachments.forEach((attachment) => {
+            const fileStream = fs.createReadStream(attachment.path);
+            form.append('attachments', fileStream, { filename: attachment.filename });  // Use the provided filename
+        });
     }
-    
-    // Define the mail options to be used for sending the email
-    const mailOptions = {
-        from: options.from, // Sender's email address
-        to: options.to, // Recipient's email addresses
-        subject: options.subject, // Subject of the email
-        html: htmlContent, // HTML content of the email (rendered from the template, if provided)
-        text: options.text, // Plain text content of the email (used if no template is provided)
-        attachments: options.attachments, // Array of attachments to include in the email
+
+    const headers = {
+        Authorization: `${process.env.API_KEY_NOTIFICATION}`,
+        ...form.getHeaders(),    
+    }
+
+    const options: AxiosRequestConfig = {
+        method: 'POST',
+        url: `${process.env.URL_NOTIFICATION}/v4/webhooks/email-notifications`,
+        headers,
+        data: form,
     };
 
     try {
-        // Send the email using the transporter instance
-        await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully'); // Log success message
+        const response = await axios.request(options);
+        console.log(response.data);
     } catch (error) {
-        // Log and rethrow any errors encountered during the email sending process
         console.error('Error sending email:', error);
-        throw error;
     }
+
 }

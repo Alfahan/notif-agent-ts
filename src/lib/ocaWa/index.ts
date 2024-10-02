@@ -1,47 +1,36 @@
 import axios, { AxiosError } from "axios";
 import { MessageData } from "./type";
+import * as dotenv from 'dotenv';
 
-// Function to send messages to a list of phone numbers using the OCA WhatsApp API
+dotenv.config();
+
+// Function to send a message to a phone number using the OCA WhatsApp API
 export const sendOcaWa = async (messageData: MessageData): Promise<void> => {
-    // Reformat phone numbers to match the expected format for the API
-    const formattedPhoneNumbers = messageData.phone_numbers.map(reformatPhone);
+    // Reformat the phone number to match the expected format for the API
+    const formattedPhoneNumber = reformatPhone(messageData.phone_number);
 
     // Define the API endpoint URL and headers
-    const url = `${process.env.OCA_WA_BASE_URL}/api/v2/push/message`;
-    const headers = { Authorization: `Bearer ${process.env.OCA_WA_TOKEN}` };
+    const url = `${process.env.URL_NOTIFICATION}/v4/webhooks/whatsapp-notification`;
+    const headers = { Authorization: `${process.env.API_KEY_NOTIFICATION}` };
 
-    // Prepare requests for sending messages to all phone numbers
-    const requests = formattedPhoneNumbers.map(phoneNumber => {
-        // Create the message payload for each phone number
-        const updatedMessageData = {
-            phone_number: phoneNumber,
-            message: messageData.message,
-        };
+    // Create the message payload
+    const updatedMessageData = {
+        phone_number: formattedPhoneNumber,
+        message: messageData.message,
+    };
 
-        // Send a POST request to the API with the message data
-        return axios.post(url, updatedMessageData, { headers })
-            .then(response => {
-                // Log success message if the request is successful
-                console.log(`Message sent to ${phoneNumber} successfully!`);
-                return response.data;
-            })
-            .catch((error: AxiosError) => {
-                // Extract and log error message if the request fails
-                const errorMessage = error?.response?.data || 'Unknown error';
-                console.error(`Error sending request to ${phoneNumber}:`, errorMessage);
-                throw new Error(`Failed to send HTTP request to ${phoneNumber}: ${errorMessage}`);
-            });
-    });
-
-    // Execute all requests in parallel and handle completion
+    // Send a POST request to the API with the message data
     try {
-        await Promise.all(requests);
-        console.log('All messages sent successfully!'); // Log success message after all requests are completed
-    } catch (error) {
-        // Log any errors that occurred during the sending process
-        console.error('Failed to send one or more messages:', error.message);
+        const response = await axios.post(url, updatedMessageData, { headers });
+        console.log(`Message sent to ${formattedPhoneNumber} successfully!`);
+        return response.data;
+    } catch (error: AxiosError | any) {
+        // Extract and log error message if the request fails
+        const errorMessage = error?.response?.data || 'Unknown error';
+        console.error(`Error sending request to ${formattedPhoneNumber}:`, errorMessage);
+        throw new Error(`Failed to send HTTP request to ${formattedPhoneNumber}: ${errorMessage}`);
     }
-}
+};
 
 // Function to reformat phone numbers to match the expected format
 const reformatPhone = (phoneNumber: string) => {
@@ -55,4 +44,4 @@ const reformatPhone = (phoneNumber: string) => {
     }
     // Return phone number as-is if no formatting is needed
     return phoneNumber;
-}
+};
