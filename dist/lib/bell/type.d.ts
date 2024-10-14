@@ -10,4 +10,7 @@ export interface NotificationPayload {
     path: string;
     content: any;
     color?: string;
+    msg_type?: string;
+    channel?: string;
+    ecosystem_id?: string;
 }
