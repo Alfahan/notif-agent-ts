@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendMail = void 0;
+exports.sendMail = sendMail;
 const axios_1 = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
@@ -46,4 +46,3 @@ function sendMail(messageToMail) {
         }
     });
 }
-exports.sendMail = sendMail;
