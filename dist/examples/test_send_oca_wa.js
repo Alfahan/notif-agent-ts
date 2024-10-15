@@ -13,11 +13,11 @@ const index_1 = require("../index"); // Make sure to import the function from th
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const messageData = {
-            phone_number: '08993613408',
+            phone_number: '08993613408', // Example recipient phone number
             message: {
                 type: 'template',
                 template: {
-                    template_code_id: '4fd64ce5_88ac_4983_a0ac_900dd0e98d0e:2stepverification',
+                    template_code_id: '4fd64ce5_88ac_4983_a0ac_900dd0e98d0e:2stepverification', // Make sure template_code_id 
                     payload: [
                         {
                             position: 'body',

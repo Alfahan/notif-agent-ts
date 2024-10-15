@@ -2,32 +2,24 @@ import axios, { AxiosRequestConfig } from 'axios';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
+import { MailOptions } from './type';
 
 dotenv.config();
 
-interface Attachment {
-    filename: string;
-    path: string;
-}
-
 export async function sendMail(
-    to: string[],
-    subject: string,
-    templateCode: string,
-    data: { [key : string]: any },
-    attachments?: Attachment[],
+    messageToMail: MailOptions
 ): Promise<void> {
     const form = new FormData();
 
-    to.forEach((recipient) => {
+    messageToMail.to.forEach((recipient) => {
         form.append('to', recipient);
     });
-    form.append('subject', subject);
-    form.append('template_code', templateCode);
-    form.append('data', JSON.stringify(data));
+    form.append('subject', messageToMail.subject);
+    form.append('template_code', messageToMail.templateCode);
+    form.append('data', JSON.stringify(messageToMail.data));
 
-    if (attachments && attachments.length > 0) {
-        attachments.forEach((attachment) => {
+    if (messageToMail.attachments && messageToMail.attachments.length > 0) {
+        messageToMail.attachments.forEach((attachment) => {
             const fileStream = fs.createReadStream(attachment.path);
             form.append('attachments', fileStream, { filename: attachment.filename });  // Use the provided filename
         });
