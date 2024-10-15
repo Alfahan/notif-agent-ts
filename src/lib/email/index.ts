@@ -51,5 +51,4 @@ export async function sendMail(
     } catch (error) {
         console.error('Error sending email:', error);
     }
-
 }

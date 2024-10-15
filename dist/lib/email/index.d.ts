@@ -1,3 +1,8 @@
+interface Attachment {
+    filename: string;
+    path: string;
+}
 export declare function sendMail(to: string[], subject: string, templateCode: string, data: {
     [key: string]: any;
-}, attachmentPath?: string): Promise<void>;
+}, attachments?: Attachment[]): Promise<void>;
+export {};

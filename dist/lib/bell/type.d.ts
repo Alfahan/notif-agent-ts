@@ -5,6 +5,7 @@ export interface UserIdentifier {
     phone: string;
 }
 export interface NotificationPayload {
+    user_id: string;
     type: string;
     icon: string;
     path: string;

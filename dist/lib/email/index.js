@@ -9,22 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendMail = sendMail;
+exports.sendMail = void 0;
 const axios_1 = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
 const dotenv = require("dotenv");
 dotenv.config();
-function sendMail(to, subject, templateCode, data, attachmentPath) {
+function sendMail(to, subject, templateCode, data, attachments) {
     return __awaiter(this, void 0, void 0, function* () {
         const form = new FormData();
-        to.forEach(recipient => form.append('to', recipient));
+        to.forEach((recipient) => {
+            form.append('to', recipient);
+        });
         form.append('subject', subject);
         form.append('template_code', templateCode);
         form.append('data', JSON.stringify(data));
-        if (attachmentPath) {
-            const fileStream = fs.createReadStream(attachmentPath);
-            form.append('attachments', fileStream);
+        if (attachments && attachments.length > 0) {
+            attachments.forEach((attachment) => {
+                const fileStream = fs.createReadStream(attachment.path);
+                form.append('attachments', fileStream, { filename: attachment.filename }); // Use the provided filename
+            });
         }
         const headers = Object.assign({ Authorization: `${process.env.API_KEY_NOTIFICATION}` }, form.getHeaders());
         const options = {
@@ -42,3 +46,4 @@ function sendMail(to, subject, templateCode, data, attachmentPath) {
         }
     });
 }
+exports.sendMail = sendMail;
