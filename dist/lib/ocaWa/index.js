@@ -11,43 +11,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendOcaWa = void 0;
 const axios_1 = require("axios");
-// Function to send messages to a list of phone numbers using the OCA WhatsApp API
+const dotenv = require("dotenv");
+dotenv.config();
+// Function to send a message to a phone number using the OCA WhatsApp API
 const sendOcaWa = (messageData) => __awaiter(void 0, void 0, void 0, function* () {
-    // Reformat phone numbers to match the expected format for the API
-    const formattedPhoneNumbers = messageData.phone_numbers.map(reformatPhone);
+    var _a;
+    // Reformat the phone number to match the expected format for the API
+    const formattedPhoneNumber = reformatPhone(messageData.phone_number);
     // Define the API endpoint URL and headers
-    const url = `${process.env.OCA_WA_BASE_URL}/api/v2/push/message`;
-    const headers = { Authorization: `Bearer ${process.env.OCA_WA_TOKEN}` };
-    // Prepare requests for sending messages to all phone numbers
-    const requests = formattedPhoneNumbers.map(phoneNumber => {
-        // Create the message payload for each phone number
-        const updatedMessageData = {
-            phone_number: phoneNumber,
-            message: messageData.message,
-        };
-        // Send a POST request to the API with the message data
-        return axios_1.default.post(url, updatedMessageData, { headers })
-            .then(response => {
-            // Log success message if the request is successful
-            console.log(`Message sent to ${phoneNumber} successfully!`);
-            return response.data;
-        })
-            .catch((error) => {
-            var _a;
-            // Extract and log error message if the request fails
-            const errorMessage = ((_a = error === null || error === void 0 ? void 0 : error.response) === null || _a === void 0 ? void 0 : _a.data) || 'Unknown error';
-            console.error(`Error sending request to ${phoneNumber}:`, errorMessage);
-            throw new Error(`Failed to send HTTP request to ${phoneNumber}: ${errorMessage}`);
-        });
-    });
-    // Execute all requests in parallel and handle completion
+    const url = `${process.env.URL_NOTIFICATION}/v4/webhooks/whatsapp-notification`;
+    const headers = { Authorization: `${process.env.API_KEY_NOTIFICATION}` };
+    // Create the message payload
+    const updatedMessageData = {
+        phone_number: formattedPhoneNumber,
+        message: messageData.message,
+    };
+    // Send a POST request to the API with the message data
     try {
-        yield Promise.all(requests);
-        console.log('All messages sent successfully!'); // Log success message after all requests are completed
+        const response = yield axios_1.default.post(url, updatedMessageData, { headers });
+        console.log(`Message sent to ${formattedPhoneNumber} successfully!`);
+        return response.data;
     }
     catch (error) {
-        // Log any errors that occurred during the sending process
-        console.error('Failed to send one or more messages:', error.message);
+        // Extract and log error message if the request fails
+        const errorMessage = ((_a = error === null || error === void 0 ? void 0 : error.response) === null || _a === void 0 ? void 0 : _a.data) || 'Unknown error';
+        console.error(`Error sending request to ${formattedPhoneNumber}:`, errorMessage);
+        throw new Error(`Failed to send HTTP request to ${formattedPhoneNumber}: ${errorMessage}`);
     }
 });
 exports.sendOcaWa = sendOcaWa;

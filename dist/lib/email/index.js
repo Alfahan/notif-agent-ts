@@ -15,16 +15,20 @@ const FormData = require("form-data");
 const fs = require("fs");
 const dotenv = require("dotenv");
 dotenv.config();
-function sendMail(to, subject, templateCode, data, attachmentPath) {
+function sendMail(messageToMail) {
     return __awaiter(this, void 0, void 0, function* () {
         const form = new FormData();
-        to.forEach(recipient => form.append('to', recipient));
-        form.append('subject', subject);
-        form.append('template_code', templateCode);
-        form.append('data', JSON.stringify(data));
-        if (attachmentPath) {
-            const fileStream = fs.createReadStream(attachmentPath);
-            form.append('attachments', fileStream);
+        messageToMail.to.forEach((recipient) => {
+            form.append('to', recipient);
+        });
+        form.append('subject', messageToMail.subject);
+        form.append('template_code', messageToMail.templateCode);
+        form.append('data', JSON.stringify(messageToMail.data));
+        if (messageToMail.attachments && messageToMail.attachments.length > 0) {
+            messageToMail.attachments.forEach((attachment) => {
+                const fileStream = fs.createReadStream(attachment.path);
+                form.append('attachments', fileStream, { filename: attachment.filename }); // Use the provided filename
+            });
         }
         const headers = Object.assign({ Authorization: `${process.env.API_KEY_NOTIFICATION}` }, form.getHeaders());
         const options = {

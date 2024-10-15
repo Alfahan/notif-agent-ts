@@ -1,14 +1,14 @@
+interface Attachment {
+    filename: string;
+    path: string;
+}
 export interface MailOptions {
-    from: string;
     to: string[];
     subject: string;
-    templatePath?: string;
-    context?: {
+    templateCode: string;
+    data: {
         [key: string]: any;
     };
-    text?: string;
-    attachments?: Array<{
-        filename: string;
-        path: string;
-    }>;
+    attachments?: Attachment[];
 }
+export {};

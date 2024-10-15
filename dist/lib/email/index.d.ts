@@ -1,3 +1,2 @@
-export declare function sendMail(to: string[], subject: string, templateCode: string, data: {
-    [key: string]: any;
-}, attachmentPath?: string): Promise<void>;
+import { MailOptions } from './type';
+export declare function sendMail(messageToMail: MailOptions): Promise<void>;
