@@ -1,17 +1,17 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
+import Notification from "../index";
+
 const userIdentifiers = [
     {
         user_id: '00000000-0000-0000-0000-000000000001',
-    },
+    }, 
     {
         user_id: '00000000-0000-0000-0000-000000000002',
-    },
+    }, 
     {
         user_id: '00000000-0000-0000-0000-000000000003',
     },
-];
+]
+
 const NotifPayload = {
     type: "info-ts",
     icon: "icon.png",
@@ -21,5 +21,8 @@ const NotifPayload = {
     },
     color: "primay",
     msg_type: "dm",
-};
-index_1.default.sendBell(userIdentifiers, NotifPayload);
+}
+
+Notification.sendBell(
+    userIdentifiers, NotifPayload
+)

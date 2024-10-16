@@ -43,6 +43,7 @@ export const sendBell = async (userIdentifiers: UserIdentifier[], payload: Notif
 
 export const sendBellBulk = async (userIdentifiers: UserIdentifier[], payload: NotificationPayload[]): Promise<void> => {
     try {
+        console.log(payload);
         if (!userIdentifiers || userIdentifiers.length === 0) {
             if (payload.length > 0) {
                 const axiosResponse = await axios.post(`${process.env.URL_NOTIFICATION}/v4/webhooks/notifications-bulk`, payload, {

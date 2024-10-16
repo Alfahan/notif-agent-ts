@@ -48,6 +48,7 @@ const sendBell = (userIdentifiers, payload) => __awaiter(void 0, void 0, void 0,
 exports.sendBell = sendBell;
 const sendBellBulk = (userIdentifiers, payload) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log(payload);
         if (!userIdentifiers || userIdentifiers.length === 0) {
             if (payload.length > 0) {
                 const axiosResponse = yield axios.post(`${process.env.URL_NOTIFICATION}/v4/webhooks/notifications-bulk`, payload, {
