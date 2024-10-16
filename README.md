@@ -15,15 +15,65 @@
 
 ## Usage Examples
 ### Usage Notification Bell
-
 ```typescript
-    // ... On Progress ...
+    import Notification from "notif-agent-ts";
+
+    const userIdentifiers = [
+        {
+            user_id: '00000000-0000-0000-0000-000000000001',
+        }, 
+        {
+            user_id: '00000000-0000-0000-0000-000000000002',
+        }, 
+        {
+            user_id: '00000000-0000-0000-0000-000000000003',
+        },
+    ]
+
+    const NotifPayload = {
+        type: "info-ts",
+        icon: "icon.png",
+        path: "/path/to/notification",
+        content: {
+            "message": "This is a test notification"
+        },
+        color: "primay",
+        msg_type: "dm",
+    }
+
+    Notification.sendBell(
+        userIdentifiers, NotifPayload
+    )
+```
+
+### Usage Notification Bell Broadcast
+```typescript
+    import Notification from "notif-agent-ts";
+
+    // broadcast
+    const NotifPayload = [{
+        user_id: null,
+        type: "info-ts",
+        icon: "icon.png",
+        path: "/path/to/notification",
+        content: {
+            "message": "This is a test notification"
+        },
+        color: "primay",
+        msg_type: "broadcast",
+        channel: "test",
+        ecosystem_id: "00000000-0000-0000-0000-000000000000",
+    }]
+
+    Notification.sendBellBulk(
+        null, NotifPayload
+    )
 ```
 
 ### Usage Notification Email
 ```typescript
     import path = require('path');
-    import Notification from '../index'; // Make sure to import the function from the correct location
+    import Notification from 'notif-agent-ts'; // Make sure to import the function from the correct location
 
     Notification.sendMail(
         ['ali.farhan160@gmail.com', 'diasnour0395@gmail.com'],
@@ -47,7 +97,7 @@
 
 ### Usage Notification Wa OCA
 ```typescript
-    import Notification from '../index'; // Make sure to import the function from the correct location
+    import Notification from 'notif-agent-ts'; // Make sure to import the function from the correct location
 
     async function main() {
         const messageData = {
@@ -100,8 +150,6 @@
     main();
 
 ```
-
-### Usage Notification 
 
 ## Change Log
 
